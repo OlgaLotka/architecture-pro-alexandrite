@@ -1,0 +1,16 @@
+@startuml
+ShopApi -> CRM: Создание заказа со  статусом INITIATED
+CRM -> db: Заказ создан
+db --> Caching: обновление объекта в кеше
+ShopApi -> 3dFiles: Загружена модель для заказа. Статус FILE_UPLOADED
+CRM -> MES: система посчитала стоимость заказа PRICE_CALCULATED
+db -> 3dFiles: Файл сохранен
+
+
+MES -> db: оператор взял заказ в работу MANUFACTURING_STARTED
+MES -> db: оператор выполнил заказ MANUFACTURING_COMPLETED
+MES -> db: оператор начал упаковывать заказ PACKAGING
+MES -> db:  заказ отправлен покупателю SHIPPED
+MES -> CRM: заказ завершён. Он закрывается после получения сообщения от транспортной компании или вручную CLOSED
+
+@enduml
