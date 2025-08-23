@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import requests
 
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
@@ -8,7 +9,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-
+url = 'http://localhost:8084/3d-model'
 #tracer
 trace.set_tracer_provider(
    TracerProvider(
@@ -29,19 +30,25 @@ FlaskInstrumentor().instrument_app(app) #flask instrumentation
 RequestsInstrumentor().instrument() #request instrumentation 
 
 
-@app.route('/3d-model', methods=['POST'])
-def create_usersScenario():
-    with trace.get_tracer(__name__).start_as_current_span("pay"):
+@app.route('/order', methods=['POST'])
+def create_Order():
+    with trace.get_tracer(__name__).start_as_current_span("span"):
         data = request.get_json()
-        count = data['line-count']
-        v = 0 
-        for i in range(count):
-            for j in range(3):
-                v = v + (i*j)
-    return jsonify({'volume': v}), 201
+        name = data['name']
+        count = data['count']
+
+        headers = {
+            'Content-Type': 'application/json'
+            }
+        body = '{"line-count":8}'
+
+        response = requests.post(url, headers=headers, data=body)
+        print("response.content", response.json().get('volume'))
+
+    return jsonify({"name": name, 'volume': response.json().get('volume')}), 201
 
 
 
 if __name__ == '__main__':
 
-    app.run(host="0.0.0.0", port=8084, debug=True)
+    app.run(host="0.0.0.0", port=8081, debug=True)

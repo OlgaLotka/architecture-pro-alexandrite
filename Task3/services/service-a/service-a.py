@@ -31,7 +31,7 @@ RequestsInstrumentor().instrument() #request instrumentation
 
 @app.route('/3d-model', methods=['POST'])
 def create_usersScenario():
-    with trace.get_tracer(__name__).start_as_current_span("pay"):
+    with trace.get_tracer(__name__).start_as_current_span("span"):
         data = request.get_json()
         count = data['line-count']
         v = 0 
