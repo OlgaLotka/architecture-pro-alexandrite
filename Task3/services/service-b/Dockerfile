@@ -1,5 +1,5 @@
 # Используем базовый образ Python
-FROM python:3.12.0a7-slim-buster 
+FROM python:3.13.7-alpine
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -9,7 +9,11 @@ COPY . /app
 
 # Устанавливаем зависимости
 
-RUN pip install  -r requirements.txt --no-cache-dir 
+RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers
+RUN apk add --no-cache jpeg-dev zlib-dev mariadb-dev libffi-dev openblas-dev libgfortran lapack-dev build-base openssl-dev
+
+RUN apk add --no-cache hdf5-dev
+RUN pip install  -r requirements.txt
 
 
 #CMD ["python", "service-b.py"]

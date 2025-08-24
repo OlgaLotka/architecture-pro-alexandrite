@@ -10,8 +10,11 @@ COPY . /app
 # Устанавливаем зависимости
 # Install h5py with no-binary flag
 
-RUN pip install pkgconfig
-RUN pip install  -r requirements.txt --no-cache-dir
+RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers
+RUN apk add --no-cache jpeg-dev zlib-dev mariadb-dev libffi-dev openblas-dev libgfortran lapack-dev build-base openssl-dev
+
+RUN apk add --no-cache hdf5-dev
+RUN pip install  -r requirements.txt
 
 
 #CMD ["python", "service-a.py"]
