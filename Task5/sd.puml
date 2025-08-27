@@ -4,13 +4,29 @@ CRM -> db: Заказ создан
 db --> Caching: обновление объекта в кеше
 ShopApi -> 3dFiles: Загружена модель для заказа. Статус FILE_UPLOADED
 CRM -> MES: система посчитала стоимость заказа PRICE_CALCULATED
+MES -> db: Обновляем бд PRICE_CALCULATED
+MES --> Caching: Посылаем событие на обновление. Статус PRICE_CALCULATED и стоимость
 db -> 3dFiles: Файл сохранен
 
 
 MES -> db: оператор взял заказ в работу MANUFACTURING_STARTED
+MES --> Caching: Посылаем событие на обновление. Статус MANUFACTURING_STARTED
 MES -> db: оператор выполнил заказ MANUFACTURING_COMPLETED
+MES --> Caching: Посылаем событие на обновление. СтатусMANUFACTURING_COMPLETED
 MES -> db: оператор начал упаковывать заказ PACKAGING
+MES --> Caching: Посылаем событие на обновление. Статус PACKAGING
 MES -> db:  заказ отправлен покупателю SHIPPED
+MES --> Caching: Посылаем событие на обновление. Статус SHIPPED
 MES -> CRM: заказ завершён. Он закрывается после получения сообщения от транспортной компании или вручную CLOSED
+MES --> Caching: Посылаем событие на обновление. Статус CLOSED
+
+
+ShopApi -> CRM: просмотр заказа
+CRM -> Caching: поиск заказа
+Caching --> CRM: Заказ найден, возращаем объект
+ShopApi -> CRM: поиск заказа
+CRM -> Caching: поиск заказа
+Caching --> CRM: Заказ не найден
+CRM-> db: Заказ найден, возращаем объект
 
 @enduml
